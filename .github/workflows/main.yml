@@ -12,9 +12,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - run: gradle assembleDebug
-        working-directory: FestivalWidget
+      - name: Build
+        run: |
+          ls
+          F=$(find . -name settings.gradle.kts -not -path './.git/*' | head -n 1)
+          if [ -z "$F" ]; then echo "settings.gradle.kts NOT FOUND in repo"; exit 1; fi
+          cd "$(dirname "$F")"
+          gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: FestivalWidget/app/build/outputs/apk/debug/app-debug.apk
+          path: "**/build/outputs/apk/debug/app-debug.apk"
